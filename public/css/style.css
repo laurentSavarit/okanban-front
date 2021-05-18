@@ -4,6 +4,10 @@ body {
     box-sizing: border-box;
 }
 
+header {
+    position: relative;
+}
+
 .title {
     font-size: 3em;
     margin: 1em;
@@ -95,12 +99,47 @@ body {
     border-radius: 1rem;
 }
 
+.list-button{
+    position: absolute;
+    right: .5rem;
+    top: 2rem;
+    z-index: 100;
+    border-radius: 1rem;
+}
+
 .color-button{
     position: absolute;
     right: .5rem;
     top: 2rem;
     z-index: 100;
     border-radius: 1rem;
+}
+
+.button-header{
+    position: absolute;
+    right: 5.25rem;
+    bottom: 0;
+    background-color:darkolivegreen;
+    font-size: 1.5em;
+    box-shadow: none;
+    border: none;
+    padding:.5em;
+    border-radius:1em;
+}
+.button-header:hover{
+    background-color:darkred;
+}
+
+.input-header{
+    position: absolute;
+    right: 5.25rem;
+    bottom: 0;
+    background-color:white;
+    font-size: 1.5em;
+    box-shadow: none;
+    border: none;
+    padding:.5em;
+    border-radius:1em;
 }
 
 .footer {

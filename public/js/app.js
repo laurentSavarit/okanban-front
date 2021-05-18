@@ -4,15 +4,75 @@ const app = {
 
     //on initialise notre app
     init: () => {
+
+        app.buttonList();
         app.allLists();
     },
 
+    buttonList: () => {
+        const parentElement = document.querySelector("header");
+        const buttonElement = document.createElement("button");
+        buttonElement.classList.add("button-header");
+        buttonElement.textContent = "Ajouter une liste";
+        parentElement.appendChild(buttonElement);
+        buttonElement.addEventListener("click", app.addList);
+    },
+
+    addList: (event) => {
+        try {
+            event.target.remove();
+            const parentElement = document.querySelector("header");
+            const inputElement = document.createElement("input");
+            inputElement.setAttribute("type", "text");
+            inputElement.classList.add("input-header");
+            inputElement.value = "Le titre de la liste puis enter";
+            parentElement.appendChild(inputElement);
+            inputElement.addEventListener("keyup", async (event) => {
+                if (event.key === "Enter") {
+
+                    try {
+                        const listTitle = event.target.value;
+                        const newList = {
+                            title: listTitle
+                        };
+                        const requestNewList = await fetch("http://localhost:3000/api/list", {
+                            method: "POST",
+                            headers: {
+                                "Content-type": "application/json; charset=UTF-8"
+                            },
+                            body: JSON.stringify(newList)
+                        });
+
+                        const responseList = await requestNewList.json();
+
+                        if (responseList) {
+
+                            app.createList(responseList);
+                            event.target.remove();
+                            app.buttonList();
+
+                        } else {
+                            console.error(`Nous n'avons pas pu créer l'élément demandé...`);
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
+                } else {
+                    return;
+                }
+            })
+
+        } catch (err) {
+            console.error(err);
+        }
+    },
+
     //permet de récuperer toutes les listes et de générer le DOM
-    allLists: async () => {
+    allLists: async (url) => {
 
         try {
             //on recupere toutes les listes via notre api
-            const requestLists = await fetch("/api/list");
+            const requestLists = await fetch("http://localhost:3000/api/list");
             const allLists = await requestLists.json();
 
             //on génére les listes en fonction du retour de notre api
@@ -39,7 +99,7 @@ const app = {
         try {
             const card = event.target;
 
-            const requestDeleteCard = await fetch(`/api/card/${card.id}`, {
+            const requestDeleteCard = await fetch(`http://localhost:3000/api/card/${card.id}`, {
                 method: "DELETE"
             });
 
@@ -62,7 +122,7 @@ const app = {
                 order: 1
             };
 
-            const requestNewCard = await fetch("/api/card", {
+            const requestNewCard = await fetch("http://localhost:3000/api/card", {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
@@ -92,7 +152,12 @@ const app = {
         const newList = document.createElement("div");
         newList.classList.add("container__list");
         newList.setAttribute("id", `list_${listData.id}`);
+        newList.dataset.listId = listData.id;
         divParent.appendChild(newList);
+        newList.addEventListener("dragover", app.dragOverList);
+        newList.addEventListener("drop", app.dropList);
+
+
         const titleList = document.createElement("h2");
         titleList.classList.add("title-list");
         titleList.textContent = listData.title;
@@ -103,7 +168,52 @@ const app = {
         newAddCard.setAttribute("id", listData.id);
         newAddCard.textContent = "Ajouter une carte";
         newAddCard.addEventListener("click", app.addCard);
+
+        const newDeleteCard = document.createElement("button");
+        newDeleteCard.classList.add("list-button");
+        newDeleteCard.dataset.id = listData.id;
+        newDeleteCard.textContent = "Supprimer la liste";
+        newDeleteCard.addEventListener("click", app.deleteList);
+
+
+        newList.appendChild(newDeleteCard);
         newList.appendChild(newAddCard);
+    },
+
+    dragOverList: (event) => {
+
+        event.preventDefault();
+
+    },
+
+    dropList: async (event) => {
+
+        try {
+            const parentElement = event.target;
+            const cardDrop = event.dataTransfer.getData("card");
+            const cardElement = document.getElementById(cardDrop);
+            parentElement.appendChild(cardElement);
+
+            const requestUpdate = {};
+            requestUpdate.list_id = parseInt(parentElement.dataset.listId, 10);
+
+            console.log(requestUpdate);
+
+            const cardId = cardElement.dataset.cardId;
+
+            const updateListOfCard = await fetch(`http://localhost:3000/api/card/${cardId}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                },
+                body: JSON.stringify(requestUpdate)
+            });
+
+            location.reload();
+
+        } catch (err) {
+            console.error(err);
+        }
     },
 
     //methode pour créer une carte dans le DOM
@@ -114,8 +224,13 @@ const app = {
         const cardElement = document.createElement("div");
         cardElement.classList.add("list__card");
         cardElement.style.backgroundColor = cardData.color;
+        cardElement.setAttribute("draggable", "true");
         cardElement.setAttribute("id", `card_${cardData.id}`);
+        cardElement.dataset.listId = cardData.list_id;
+        cardElement.dataset.cardId = cardData.id;
         listElement.appendChild(cardElement);
+        cardElement.addEventListener("dragstart", app.dragStartCard);
+        cardElement.addEventListener("dragend", app.dragEndCard);
 
         const newTitle = document.createElement("h3");
         newTitle.textContent = cardData.title;
@@ -150,6 +265,18 @@ const app = {
         newColorButton.dataset.id = cardData.id;
         cardElement.appendChild(newColorButton);
         newColorButton.addEventListener("change", app.updateColor);
+    },
+
+    dragStartCard: (event) => {
+
+        event.dataTransfer.setData("card", event.target.id);
+        event.target.style.border = "solid 4px red";
+    },
+
+    dragEndCard: (event) => {
+
+        event.preventDefault();
+        event.target.style.border = "none";
     },
 
     updateTitle: (event) => {
@@ -187,7 +314,7 @@ const app = {
             const obj = {};
             obj[columnUpdate] = valueUpdate;
 
-            const request = await fetch(`/api/card/${cardId}`, {
+            const request = await fetch(`http://localhost:3000/api/card/${cardId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
@@ -211,7 +338,7 @@ const app = {
             color: color
         }
 
-        const request = await fetch(`/api/card/${cardId}`, {
+        const request = await fetch(`http://localhost:3000/api/card/${cardId}`, {
             method: "PATCH",
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
@@ -219,11 +346,25 @@ const app = {
             body: JSON.stringify(obj)
         });
 
-        
+
 
         location.reload();
 
     },
+
+    deleteList: async (event) => {
+        try {
+            const list = event.target;
+
+            const requestDeleteCard = await fetch(`http://localhost:3000/api/list/${list.dataset.id}`, {
+                method: "DELETE"
+            });
+
+            document.getElementById(`list_${list.dataset.id}`).remove();
+        } catch (err) {
+            console.error(err);
+        }
+    }
 }
 
 document.addEventListener("DOMContentLoaded", app.init);
