@@ -164,7 +164,7 @@ const app = {
         newList.appendChild(titleList);
 
         const newAddCard = document.createElement("button");
-        newAddCard.classList.add("close-button");
+        newAddCard.classList.add("other-button");
         newAddCard.setAttribute("id", listData.id);
         newAddCard.textContent = "Ajouter une carte";
         newAddCard.addEventListener("click", app.addCard);
@@ -208,8 +208,6 @@ const app = {
                 },
                 body: JSON.stringify(requestUpdate)
             });
-
-            location.reload();
 
         } catch (err) {
             console.error(err);
@@ -269,12 +267,14 @@ const app = {
 
     dragStartCard: (event) => {
 
+        event.stopPropagation();
         event.dataTransfer.setData("card", event.target.id);
         event.target.style.border = "solid 4px red";
     },
 
     dragEndCard: (event) => {
 
+        event.stopPropagation();
         event.preventDefault();
         event.target.style.border = "none";
     },
@@ -305,16 +305,25 @@ const app = {
         const valueUpdate = event.target.value;
         const cardId = event.target.dataset.cardId;
 
-        if (event.key === "Enter") {
+        if (event.key === "Escape") {
+
+            event.target.remove();
+
+            const cardElement = document.getElementById(`card_${event.target.dataset.cardId}`)
+            const newTitle = document.createElement("h3");
+            newTitle.textContent = valueUpdate;
+            newTitle.dataset.cardId = event.target.dataset.cardId;
+            cardElement.appendChild(newTitle);
+            newTitle.addEventListener("click", app.updateTitle);
+
+        } else if (event.key === "Enter") {
 
             console.log(cardId);
-
-            const card = document.querySelector(`#card_${cardId}`);
 
             const obj = {};
             obj[columnUpdate] = valueUpdate;
 
-            const request = await fetch(`http://localhost:3000/api/card/${cardId}`, {
+            await fetch(`http://localhost:3000/api/card/${cardId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
@@ -322,7 +331,15 @@ const app = {
                 body: JSON.stringify(obj)
             });
 
-            location.reload();
+            event.target.remove();
+
+            const cardElement = document.getElementById(`card_${event.target.dataset.cardId}`)
+            const newTitle = document.createElement("h3");
+            newTitle.textContent = valueUpdate;
+            newTitle.dataset.cardId = event.target.dataset.cardId;
+            cardElement.appendChild(newTitle);
+            newTitle.addEventListener("click", app.updateTitle);
+
         } else {
             return;
         }

@@ -6,6 +6,7 @@ body {
 
 header {
     position: relative;
+    padding:0 2.5em;
 }
 
 .title {
@@ -72,10 +73,40 @@ header {
 }
 
 .list__card input[type="text"] {
-    width: 70%;
+    width: 80%;
     position: absolute;
     top:2rem;
-    left:0;
+    left:50%;
+    box-sizing: border-box;
+    text-align:center;
+    margin:0 auto;
+    transform: translate(-50%);
+    border-radius: 1em;
+    background-color: darkgreen;
+    color:white;
+    border: none;
+    font-weight: 700;
+    font-size:1em;
+}
+
+input[type="color"] {
+    width: 1.5em;
+    height:1.5em;
+    -webkit-appearance: none;
+    border: none;
+
+}
+
+input[type="color"]:hover {
+    cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+	padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+	border: none;
+    border-radius:50%;
 }
 
 .card-tag {
@@ -96,15 +127,50 @@ header {
     right: .5rem;
     top: .5rem;
     z-index: 100;
-    border-radius: 1rem;
+    border-radius: 50%;
+    width: 1.5em;
+    height: 1.5em;
+    background-color:darkred;
+    color:white;
+    font-weight: 700;
+    border:none;
 }
+
+.close-button:hover{
+    background-color: red;
+}
+
+.other-button{
+    position: absolute;
+    right: .5rem;
+    top: .5rem;
+    z-index: 100;
+    background-color:darkgreen;
+    color:white;
+    border:none;
+    border-radius: 1em;
+    padding:.2em;
+}
+
+.other-button:hover{
+    background-color: green;
+}
+
 
 .list-button{
     position: absolute;
     right: .5rem;
     top: 2rem;
     z-index: 100;
-    border-radius: 1rem;
+    background-color:darkred;
+    color:white;
+    border:none;
+    border-radius: 1em;
+    padding:.2em;
+}
+
+.list-button:hover{
+    background-color: red;
 }
 
 .color-button{
@@ -119,12 +185,13 @@ header {
     position: absolute;
     right: 5.25rem;
     bottom: 0;
-    background-color:darkolivegreen;
+    background-color:darkgreen;
     font-size: 1.5em;
     box-shadow: none;
     border: none;
     padding:.5em;
     border-radius:1em;
+    color:white;
 }
 .button-header:hover{
     background-color:darkred;
