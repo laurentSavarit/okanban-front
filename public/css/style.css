@@ -1,0 +1,110 @@
+body {
+    background-color: darkslategray;
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+
+.title {
+    font-size: 3em;
+    margin: 1em;
+    font-weight: 700;
+    color: whitesmoke;
+    text-shadow: 1px 2px 2px black;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 90vw;
+    height: 80vh;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
+    border-radius: 1em;
+}
+
+.container__list {
+    position:relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30%;
+    height: 95%;
+    background-color: rgba(255,255,255,0.5);
+    margin: 1em;
+    border-radius: 1em;
+    overflow: auto;
+}
+
+.title-list {
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+    background-color: whitesmoke;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 1rem 1rem 0 0;
+    text-align: center;
+}
+
+.list__card {
+    position:relative;
+    background-color:darkslategray;
+    width: 95%;
+    height: 10%;
+    margin: .5rem auto;
+    border-radius:1rem;
+    font-size: 1rem;
+    text-align: center;
+    box-sizing: border-box;
+    color: whitesmoke;
+}
+
+.list__card h3{
+    position:absolute;
+    top:2rem;
+    width: 100%;
+}
+
+.list__card input[type="text"] {
+    width: 70%;
+    position: absolute;
+    top:2rem;
+    left:0;
+}
+
+.card-tag {
+    display:block;
+    background-color:black;
+    width: 100%;
+    position:absolute;
+    top:0;
+    border-radius: 1rem 1rem 0 0;
+    padding:.25rem;
+    box-sizing: border-box;
+    color:red;
+    font-weight:700;
+}
+
+.close-button{
+    position: absolute;
+    right: .5rem;
+    top: .5rem;
+    z-index: 100;
+    border-radius: 1rem;
+}
+
+.color-button{
+    position: absolute;
+    right: .5rem;
+    top: 2rem;
+    z-index: 100;
+    border-radius: 1rem;
+}
+
+.footer {
+    color: whitesmoke;
+    text-align: center;
+    margin: 1em 0;
+}
